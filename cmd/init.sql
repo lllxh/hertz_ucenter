@@ -1,23 +1,18 @@
-CREATE DATABASE jason CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
-use jason;
-
--- auto-generated definition
-create table if not exists user
-(
-    id           bigint auto_increment comment 'id'
-    primary key,
-    username     varchar(256)                       not null comment '用户昵称',
-    userAccount  varchar(256)                       null comment '账号',
-    avatarUrl    varchar(1024)                      null comment '用户头像',
-    gender       tinyint                            null comment '性别',
-    userPassword varchar(512)                       not null comment '密码',
-    phone        varchar(128)                       null comment '电话',
-    email        varchar(256)                       null comment 'email',
-    userStatus   int      default 0                 not null comment '用户状态',
-    createTime   datetime default CURRENT_TIMESTAMP not null comment '创建时间',
-    updateTime   datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
-    isDelete     tinyint                            null comment '是否删除'
-    )
-    comment '用户表';
+CREATE TABLE `user` (
+                        `username` longtext COLLATE utf8mb4_unicode_ci,
+                        `userAccount` longtext COLLATE utf8mb4_unicode_ci,
+                        `avatarUrl` longtext COLLATE utf8mb4_unicode_ci,
+                        `gender` tinyint(4) DEFAULT NULL,
+                        `userPassword` longtext COLLATE utf8mb4_unicode_ci,
+                        `phone` longtext COLLATE utf8mb4_unicode_ci,
+                        `email` longtext COLLATE utf8mb4_unicode_ci,
+                        `userStatus` bigint(20) DEFAULT NULL,
+                        `userRole` bigint(20) DEFAULT NULL,
+                        `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                        `created_at` datetime(3) DEFAULT NULL,
+                        `updated_at` datetime(3) DEFAULT NULL,
+                        `deleted_at` datetime(3) DEFAULT NULL,
+                        PRIMARY KEY (`id`),
+                        KEY `idx_user_deleted_at` (`deleted_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 
