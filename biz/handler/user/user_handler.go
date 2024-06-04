@@ -60,9 +60,25 @@ func UserLogin(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// QueryUserResponse .
-// @router /v1/user/query [GET]
-func QueryUserResponse(ctx context.Context, c *app.RequestContext) {
+// UserLogout .
+// @router /v1/user/logout [POST]
+func UserLogout(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req user.UserLogoutRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(user.UserLogoutResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// QueryUser .
+// @router /v1/user/query [POST]
+func QueryUser(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.UserRequest
 	err = c.BindAndValidate(&req)
@@ -75,19 +91,19 @@ func QueryUserResponse(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	//u, err := service.NewUserService(ctx, c).UserInfo(&req)
-	//
-	//resp := utils.BuildBaseResp(err)
-	//c.JSON(consts.StatusOK, user.UserResponse{
-	//	Code: resp.StatusCode,
-	//	Msg:  resp.StatusMsg,
-	//	User: u,
-	//})
+	u, err := service.NewUserService(ctx, c).QueryUserByPage(&req)
+
+	resp := utils.BuildBaseResp(err)
+	c.JSON(consts.StatusOK, user.UserResponse{
+		Code: resp.StatusCode,
+		Msg:  resp.StatusMsg,
+		User: u,
+	})
 }
 
-// UpdateUserResponse .
+// UpdateUser .
 // @router /v1/user/update/:user_id [POST]
-func UpdateUserResponse(ctx context.Context, c *app.RequestContext) {
+func UpdateUser(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.UserUpdateRequest
 	err = c.BindAndValidate(&req)
@@ -101,9 +117,9 @@ func UpdateUserResponse(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// DeleteUserResponse .
+// DeleteUser .
 // @router /v1/user/delete/:user_id [POST]
-func DeleteUserResponse(ctx context.Context, c *app.RequestContext) {
+func DeleteUser(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.UserDeleteRequest
 	err = c.BindAndValidate(&req)
@@ -113,22 +129,6 @@ func DeleteUserResponse(ctx context.Context, c *app.RequestContext) {
 	}
 
 	resp := new(user.UserDeleteResponse)
-
-	c.JSON(consts.StatusOK, resp)
-}
-
-// UserLogout .
-// @router /v1/user/logout [POST]
-func UserLogout(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req user.UserLogoutRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-
-	resp := new(user.UserLogoutResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }

@@ -2,6 +2,8 @@ package db
 
 import (
 	"gorm.io/gorm"
+	"hertz_ucenter/pkg/utils"
+	"strconv"
 )
 
 type User struct {
@@ -34,4 +36,27 @@ func QueryUser(userAccount string) (*User, error) {
 		return nil, err
 	}
 	return &user, nil
+}
+
+// QueryUserByPage 按照分页查询用户
+func QueryUserByPage(currentPage, pageSize string) ([]*User, error) {
+	var users []*User
+	// 转int
+	currentPageInt, err := strconv.Atoi(currentPage)
+	if err != nil {
+		return nil, err
+	}
+	pageSizeInt, err := strconv.Atoi(pageSize)
+	if err != nil {
+		return nil, err
+	}
+	// 分页逻辑
+	p := &utils.Pagination{
+		PageSize:    pageSizeInt,
+		CurrentPage: currentPageInt,
+	}
+	if err := DB.Limit(p.PageSize).Offset(p.Offset()).Find(&users).Error; err != nil {
+		return nil, err
+	}
+	return users, nil
 }

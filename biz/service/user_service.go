@@ -5,6 +5,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"hertz_ucenter/biz/dal/db"
 	"hertz_ucenter/biz/model/hertz/user"
+	"hertz_ucenter/biz/pack"
 	"hertz_ucenter/pkg/errno"
 	"hertz_ucenter/pkg/utils"
 )
@@ -49,4 +50,14 @@ func (s *UserService) UserRegister(req *user.UserRegisterRequest) (uint, error) 
 		UserRole:     1, // 默认角色为1, 普通用户, 0为管理员
 	})
 	return userId, err
+}
+
+func (s *UserService) QueryUserByPage(req *user.UserRequest) ([]*user.User, error) {
+	dbUsers, err := db.QueryUserByPage(req.CurrentPage, req.PageSize)
+	if err != nil {
+		return nil, err
+	}
+	users := pack.Users(dbUsers)
+
+	return users, err
 }

@@ -59,9 +59,9 @@ message UserLogoutResponse{
 }
 
 message UserRequest{
-  string keyword = 1 [(api.body) = "keyword", (api.form) = "keyword"];
-  int64 page = 2 [(api.body) = "page", (api.form) = "page", (api.vd) = "$>0"];
-  int64 page_size = 3 [(api.body) = "page_size", (api.form) = "page_size", (api.vd) = "($ > 0 || $ <= 100)"];
+  string keyword = 1;
+  string currentPage = 2 [(api.body) = "currentPage", (api.form) = "currentPage", (api.vd) = "$>0"];
+  string pageSize = 3 [(api.body) = "pageSize", (api.form) = "pageSize", (api.vd) = "($ > 0 || $ <= 100)"];
 }
 
 message UserResponse{
@@ -113,13 +113,13 @@ service UserHandler {
   rpc UserLogout(UserLogoutRequest) returns(UserLogoutResponse) {
     option (api.post) = "/v1/user/logout";
   }
-  rpc QueryUserResponse(UserRequest) returns(UserResponse){
-    option (api.get) = "/v1/user/query";
+  rpc QueryUser(UserRequest) returns(UserResponse){
+    option (api.post) = "/v1/user/query";
   }
-  rpc UpdateUserResponse(UserUpdateRequest) returns(UserUpdateResponse){
+  rpc UpdateUser(UserUpdateRequest) returns(UserUpdateResponse){
     option (api.post) = "/v1/user/update/:user_id";
   }
-  rpc DeleteUserResponse(UserDeleteRequest) returns(UserDeleteResponse){
+  rpc DeleteUser(UserDeleteRequest) returns(UserDeleteResponse){
     option (api.post) = "/v1/user/delete/:user_id";
   }
 }
