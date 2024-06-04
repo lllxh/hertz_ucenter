@@ -20,3 +20,18 @@ type User struct {
 func (User) TableName() string {
 	return "user"
 }
+
+func CreateUser(user *User) (userId uint, err error) {
+	if err := DB.Create(user).Error; err != nil {
+		return 0, err
+	}
+	return user.ID, nil
+}
+
+func QueryUser(userAccount string) (*User, error) {
+	var user User
+	if err := DB.Where("userAccount = ?", userAccount).Find(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}

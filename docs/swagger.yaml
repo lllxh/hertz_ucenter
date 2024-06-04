@@ -1,0 +1,37 @@
+info:
+  contact: {}
+paths:
+  /ping:
+    get:
+      consumes:
+      - application/json
+      description: 测试 Description
+      produces:
+      - application/json
+      responses: {}
+      summary: 测试 Summary
+  /v1/user/delete/:user_id:
+    post:
+      responses: {}
+  /v1/user/login:
+    post:
+      responses: {}
+  /v1/user/logout:
+    post:
+      responses: {}
+  /v1/user/query:
+    get:
+      responses: {}
+  /v1/user/register:
+    post:
+      consumes:
+      - application/json
+      description: 用户注册
+      produces:
+      - application/json
+      responses: {}
+      summary: 用户注册
+  /v1/user/update/:user_id:
+    post:
+      responses: {}
+swagger: "2.0"

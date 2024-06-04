@@ -7,12 +7,6 @@ option go_package = "hertz/user";
 
 import "api.proto";
 
-enum Code {
-  Success = 0;
-  ParamInvalid = 1;
-  DBErr = 2;
-}
-
 enum Gender {
   Unknown = 0;
   Male = 1;
@@ -21,58 +15,72 @@ enum Gender {
 
 message User{
   int64 id = 1;
-  string user_name = 2;
-  string user_account = 3;
-  string avatar_url = 4;
+  string userName = 2;
+  string userAccount = 3;
+  string avatarUrl = 4;
   Gender gender = 5;
-  string user_password = 6;
+  string userPassword = 6;
   string phone = 7;
   string email = 8;
-  int64 user_status = 9;
-  int64 user_role = 10;
+  int64 userStatus = 9;
+  int64 userRole = 10;
 
 }
 
-message CreateUserReq{
-  string user_name = 2;
-  string user_account = 3;
-  string avatar_url = 4;
-  Gender gender = 5;
-  string user_password = 6;
-  string phone = 7;
-  string email = 8;
-  int64 user_status = 9;
-  int64 user_role = 10;
+message UserRegisterRequest{
+  string userAccount = 1;
+  string userPassword = 2;
 }
 
-message CreateUserResp{
-  Code code = 1;
+message UserRegisterResponse{
+  int32 code = 1;
+  string msg = 2;
+  uint64 userId = 3;
+}
+
+message UserLoginRequest{
+  string userAccount = 1;
+  string userPassword = 2;
+}
+
+message UserLoginResponse{
+  int32 code = 1;
+  string msg = 2;
+  User user = 3;
+}
+
+message UserLogoutRequest{
+  string userAccount = 1;
+}
+
+message UserLogoutResponse{
+  int32 code = 1;
   string msg = 2;
 }
 
-message QueryUserReq{
+message UserRequest{
   string keyword = 1 [(api.body) = "keyword", (api.form) = "keyword"];
   int64 page = 2 [(api.body) = "page", (api.form) = "page", (api.vd) = "$>0"];
   int64 page_size = 3 [(api.body) = "page_size", (api.form) = "page_size", (api.vd) = "($ > 0 || $ <= 100)"];
 }
 
-message QueryUserResp{
-  Code code = 1;
+message UserResponse{
+  int32 code = 1;
   string msg = 2;
   repeated User user = 3;
   int64 total = 4;
 }
 
-message DeleteUserReq{
+message UserDeleteRequest{
   int64 id = 1 [(api.path) = "id", (api.vd) = "$>0"];
 }
 
-message DeleteUserResp{
-  Code code = 1;
+message UserDeleteResponse{
+  int32 code = 1;
   string msg = 2;
 }
 
-message UpdateUserReq{
+message UserUpdateRequest{
   int64 id = 1 [(api.path) = "id", (api.vd) = "$>0"];
   string user_name = 2;
   string user_account = 3;
@@ -85,8 +93,8 @@ message UpdateUserReq{
   int64 user_role = 10;
 }
 
-message UpdateUserResp{
-  Code code = 1;
+message UserUpdateResponse{
+  int32 code = 1;
   string msg = 2;
 }
 
@@ -95,17 +103,23 @@ message OtherResp {
 }
 
 
-service UserService {
-  rpc CreateUserResponse(CreateUserReq) returns(CreateUserResp) {
-    option (api.post) = "/v1/user/create";
+service UserHandler {
+  rpc UserRegister(UserRegisterRequest) returns(UserRegisterResponse) {
+    option (api.post) = "/v1/user/register";
   }
-  rpc QueryUserResponse(QueryUserReq) returns(QueryUserResp){
-    option (api.post) = "/v1/user/query";
+  rpc UserLogin(UserLoginRequest) returns(UserLoginResponse) {
+    option (api.post) = "/v1/user/login";
   }
-  rpc UpdateUserResponse(UpdateUserReq) returns(UpdateUserResp){
+  rpc UserLogout(UserLogoutRequest) returns(UserLogoutResponse) {
+    option (api.post) = "/v1/user/logout";
+  }
+  rpc QueryUserResponse(UserRequest) returns(UserResponse){
+    option (api.get) = "/v1/user/query";
+  }
+  rpc UpdateUserResponse(UserUpdateRequest) returns(UserUpdateResponse){
     option (api.post) = "/v1/user/update/:user_id";
   }
-  rpc DeleteUserResponse(DeleteUserReq) returns(DeleteUserResp){
+  rpc DeleteUserResponse(UserDeleteRequest) returns(UserDeleteResponse){
     option (api.post) = "/v1/user/delete/:user_id";
   }
 }

@@ -5,8 +5,11 @@ package main
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"github.com/hertz-contrib/swagger"
+	swaggerFiles "github.com/swaggo/files"
 	"hertz_ucenter/biz/dal"
 	"hertz_ucenter/biz/dal/db"
+	_ "hertz_ucenter/docs"
 )
 
 func Init() {
@@ -27,5 +30,7 @@ func main() {
 
 	h := server.Default()
 	register(h)
+	url := swagger.URL("http://localhost:8080/swagger/doc.json")
+	h.GET("/swagger/*any", swagger.WrapHandler(swaggerFiles.Handler, url))
 	h.Spin()
 }

@@ -1,0 +1,59 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/ping": {
+            "get": {
+                "description": "测试 Description",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "测试 Summary",
+                "responses": {}
+            }
+        },
+        "/v1/user/delete/:user_id": {
+            "post": {
+                "responses": {}
+            }
+        },
+        "/v1/user/login": {
+            "post": {
+                "responses": {}
+            }
+        },
+        "/v1/user/logout": {
+            "post": {
+                "responses": {}
+            }
+        },
+        "/v1/user/query": {
+            "get": {
+                "responses": {}
+            }
+        },
+        "/v1/user/register": {
+            "post": {
+                "description": "用户注册",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "用户注册",
+                "responses": {}
+            }
+        },
+        "/v1/user/update/:user_id": {
+            "post": {
+                "responses": {}
+            }
+        }
+    }
+}
