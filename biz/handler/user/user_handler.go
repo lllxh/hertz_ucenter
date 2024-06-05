@@ -4,7 +4,9 @@ package user
 
 import (
 	"context"
+	"github.com/hertz-contrib/sessions"
 	"hertz_ucenter/biz/service"
+	pkgConsts "hertz_ucenter/pkg/consts"
 	"hertz_ucenter/pkg/errno"
 	"hertz_ucenter/pkg/utils"
 
@@ -51,13 +53,36 @@ func UserLogin(ctx context.Context, c *app.RequestContext) {
 	var req user.UserLoginRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		resp := utils.BuildBaseResp(err)
+		c.JSON(consts.StatusOK, user.UserLoginResponse{
+			Code: resp.StatusCode,
+			Msg:  resp.StatusMsg,
+		})
+		return
+	}
+	// 判断是否已经登录
+	if !utils.IsLogout(ctx, c, req.UserAccount) {
+		c.JSON(consts.StatusOK, user.UserLoginResponse{
+			Code: errno.UserAlreadyLoginErrCode,
+			Msg:  errno.AlreadyLoginMsg,
+		})
 		return
 	}
 
-	resp := new(user.UserLoginResponse)
-
-	c.JSON(consts.StatusOK, resp)
+	loginUser, err := service.NewUserService(ctx, c).UserLogin(&req)
+	if err != nil {
+		resp := utils.BuildBaseResp(err)
+		c.JSON(consts.StatusOK, user.UserLoginResponse{
+			Code: resp.StatusCode,
+			Msg:  resp.StatusMsg,
+		})
+		return
+	}
+	c.JSON(consts.StatusOK, user.UserLoginResponse{
+		Code: errno.SuccessCode,
+		Msg:  errno.LoginSuccessMsg,
+		User: loginUser,
+	})
 }
 
 // UserLogout .
@@ -67,13 +92,22 @@ func UserLogout(ctx context.Context, c *app.RequestContext) {
 	var req user.UserLogoutRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		resp := utils.BuildBaseResp(err)
+		c.JSON(consts.StatusOK, user.UserLoginResponse{
+			Code: resp.StatusCode,
+			Msg:  resp.StatusMsg,
+		})
 		return
 	}
-
-	resp := new(user.UserLogoutResponse)
-
-	c.JSON(consts.StatusOK, resp)
+	if !utils.IsLogout(ctx, c, req.UserAccount) {
+		session := sessions.Default(c)
+		session.Delete(pkgConsts.UserAccount)
+		_ = session.Save()
+	}
+	c.JSON(consts.StatusOK, user.UserLogoutResponse{
+		Code: errno.SuccessCode,
+		Msg:  errno.SuccessMsg,
+	})
 }
 
 // QueryUser .

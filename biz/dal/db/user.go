@@ -2,6 +2,7 @@ package db
 
 import (
 	"gorm.io/gorm"
+	"hertz_ucenter/pkg/errno"
 	"hertz_ucenter/pkg/utils"
 	"strconv"
 )
@@ -28,6 +29,17 @@ func CreateUser(user *User) (userId uint, err error) {
 		return 0, err
 	}
 	return user.ID, nil
+}
+
+func QueryUserLogin(userAccount, userPassword string) (*User, error) {
+	var user User
+	if err := DB.Where("userAccount = ? and deleted_at IS NULL", userAccount).Find(&user).Error; err != nil {
+		return nil, errno.UserIsNotExistErr
+	}
+	if !utils.ComparePassword(userPassword, user.UserPassword) {
+		return nil, errno.AuthorizationFailedErr
+	}
+	return &user, nil
 }
 
 func QueryUser(userAccount string) (*User, error) {

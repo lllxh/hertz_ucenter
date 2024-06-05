@@ -3,9 +3,11 @@ package service
 import (
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/hertz-contrib/sessions"
 	"hertz_ucenter/biz/dal/db"
 	"hertz_ucenter/biz/model/hertz/user"
 	"hertz_ucenter/biz/pack"
+	"hertz_ucenter/pkg/consts"
 	"hertz_ucenter/pkg/errno"
 	"hertz_ucenter/pkg/utils"
 )
@@ -49,7 +51,35 @@ func (s *UserService) UserRegister(req *user.UserRegisterRequest) (uint, error) 
 		UserStatus:   1, // 默认状态为1, 正常
 		UserRole:     1, // 默认角色为1, 普通用户, 0为管理员
 	})
+	session := sessions.Default(s.c)
+	session.Set(consts.UserAccount, req.UserAccount)
+	err = session.Save()
+	if err != nil {
+		return 0, err
+	}
 	return userId, err
+}
+
+func (s *UserService) UserLogin(req *user.UserLoginRequest) (*user.User, error) {
+	// 校验用户账户和密码是否合法
+	// 用户非空
+	if req.UserAccount == "" || len(req.UserAccount) < 4 || len(req.UserPassword) < 4 {
+		return nil, errno.ParamErr.WithMessage("param error, userAccount or userPassword is illegal")
+	}
+	// 查询用户
+	dbUser, err := db.QueryUserLogin(req.UserAccount, req.UserPassword)
+	if err != nil {
+		return nil, err
+	}
+	safeUser := pack.SafeUser(dbUser)
+	session := sessions.Default(s.c)
+	session.Set(consts.UserAccount, safeUser.UserAccount)
+	err = session.Save()
+	if err != nil {
+		return nil, err
+	}
+	return safeUser, err
+
 }
 
 func (s *UserService) QueryUserByPage(req *user.UserRequest) ([]*user.User, error) {
@@ -57,7 +87,7 @@ func (s *UserService) QueryUserByPage(req *user.UserRequest) ([]*user.User, erro
 	if err != nil {
 		return nil, err
 	}
-	users := pack.Users(dbUsers)
+	users := pack.SafeUsers(dbUsers)
 
 	return users, err
 }
