@@ -91,3 +91,11 @@ func (s *UserService) QueryUserByPage(req *user.UserRequest) ([]*user.User, erro
 
 	return users, err
 }
+
+func (s *UserService) DeleteUser(req *user.UserDeleteRequest) error {
+	_, err := db.DeleteUser(req.Id)
+	if err != nil {
+		return err
+	}
+	return err
+}

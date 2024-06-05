@@ -72,3 +72,15 @@ func QueryUserByPage(currentPage, pageSize string) ([]*User, error) {
 	}
 	return users, nil
 }
+
+func DeleteUser(userId int64) (*User, error) {
+	var user User
+
+	if err := DB.Where("id = ?", userId).First(&user).Error; err != nil {
+		return nil, errno.UserIsNotExistErr
+	}
+	if err := DB.Delete(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}

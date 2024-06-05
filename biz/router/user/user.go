@@ -27,11 +27,11 @@ func Register(r *server.Hertz) {
 			_user.POST("/register", append(_userregisterMw(), user.UserRegister)...)
 			{
 				_delete := _user.Group("/delete", _deleteMw()...)
-				_delete.POST("/:user_id", append(_deleteuserMw(), user.DeleteUser)...)
+				_delete.POST("/:id", append(_deleteuserMw(), user.DeleteUser)...)
 			}
 			{
 				_update := _user.Group("/update", _updateMw()...)
-				_update.POST("/:user_id", append(_updateuserMw(), user.UpdateUser)...)
+				_update.POST("/:id", append(_updateuserMw(), user.UpdateUser)...)
 			}
 		}
 	}

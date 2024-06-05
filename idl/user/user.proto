@@ -117,9 +117,9 @@ service UserHandler {
     option (api.post) = "/v1/user/query";
   }
   rpc UpdateUser(UserUpdateRequest) returns(UserUpdateResponse){
-    option (api.post) = "/v1/user/update/:user_id";
+    option (api.post) = "/v1/user/update/:id";
   }
   rpc DeleteUser(UserDeleteRequest) returns(UserDeleteResponse){
-    option (api.post) = "/v1/user/delete/:user_id";
+    option (api.post) = "/v1/user/delete/:id";
   }
 }

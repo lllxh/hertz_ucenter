@@ -152,17 +152,30 @@ func UpdateUser(ctx context.Context, c *app.RequestContext) {
 }
 
 // DeleteUser .
-// @router /v1/user/delete/:user_id [POST]
+// @router /v1/user/delete/:Id [POST]
 func DeleteUser(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.UserDeleteRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		resp := utils.BuildBaseResp(err)
+		c.JSON(consts.StatusOK, user.UserDeleteResponse{
+			Code: resp.StatusCode,
+			Msg:  resp.StatusMsg,
+		})
 		return
 	}
-
-	resp := new(user.UserDeleteResponse)
-
-	c.JSON(consts.StatusOK, resp)
+	err = service.NewUserService(ctx, c).DeleteUser(&req)
+	if err != nil {
+		resp := utils.BuildBaseResp(err)
+		c.JSON(consts.StatusOK, user.UserDeleteResponse{
+			Code: resp.StatusCode,
+			Msg:  resp.StatusMsg,
+		})
+		return
+	}
+	c.JSON(consts.StatusOK, user.UserDeleteResponse{
+		Code: errno.SuccessCode,
+		Msg:  errno.SuccessMsg,
+	})
 }
